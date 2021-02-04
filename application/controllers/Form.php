@@ -49,17 +49,57 @@ class Form extends CI_Controller
                 if ($insert) {
                     redirect('form/success');
                 } else {
-                    echo 'gagal';
+                    redirect('form/gagal');
                 }
             }
+
+            $this->_kirimEmail();
         }
     }
+
+    private function _kirimEmail()
+    {
+        $config = [
+            'protocol'  => 'smtp',
+            'smtp_host' => 'ssl://smtp.googlemail.com',
+            'smtp_user' => '',
+            'smtp_pass' => '',
+            'smtp_port' => 465,
+            'mailtype'  => 'html',
+            'charset'   => 'utf-8',
+            'newline'   => "\r\n"
+        ];
+
+        $this->load->library('email');
+
+        $this->email->initialize($config);
+        $this->email->from('');
+        $this->email->to();
+        $this->email->subject('Form Assessment');
+        $this->email->message('');
+
+        if ($this->email->send()) {
+            return true;
+        } else {
+            echo $this->email->print_debugger();
+            die;
+        }
+    }
+
 
     public function success()
     {
         $data['title'] = 'Form Assessment';
         $this->load->view('tamplates/header', $data);
         $this->load->view('form_assessment/success');
+        $this->load->view('tamplates/footer');
+    }
+
+    public function gagal()
+    {
+        $data['title'] = 'Form Assessment';
+        $this->load->view('tamplates/header', $data);
+        $this->load->view('form_assessment/gagal');
         $this->load->view('tamplates/footer');
     }
 }
